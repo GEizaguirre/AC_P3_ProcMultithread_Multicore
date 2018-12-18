@@ -1,0 +1,2 @@
+Primero, valoramos dividir el array a partes iguales.
+Una vez nos funcionó esta solución, porbamos a dividir el array en un fomrato piramidal. Los números inferiores tienen mayor complejidad de cálculo que los superiores.
