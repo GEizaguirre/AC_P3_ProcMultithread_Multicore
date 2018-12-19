@@ -68,7 +68,7 @@ int main (int na, char * arg[])
 
     pthread_mutex_destroy ( &lock );
 
-    QuickSort (p, INI, pp);
+    //QuickSort (p, INI, pp);
     printf ( "Hi ha %d primers\n", pp - 1 );
     printf ( "L'ultim primer trobat %d\n", p[pp - 1] );
     //for ( i = 0; i<pp; i++ ) printf ( "%d - ", p[i] );

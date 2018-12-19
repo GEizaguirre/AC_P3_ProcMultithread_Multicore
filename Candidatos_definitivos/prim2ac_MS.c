@@ -14,7 +14,7 @@ pthread_mutex_t lock;
 int num;
 
 void * calculate_primes ( void * argument ); 
-void QuickSort(int v[], int ini, int fin);
+void MergeSort (int v[], int ini, int fin);
 
 int main (int na, char * arg[])
 {
@@ -68,7 +68,7 @@ int main (int na, char * arg[])
 
     pthread_mutex_destroy ( &lock );
 
-    QuickSort (p, INI, pp);
+    MergeSort (p, INI, pp);
     printf ( "Hi ha %d primers\n", pp - 1 );
     printf ( "L'ultim primer trobat %d\n", p[pp - 1] );
     //for ( i = 0; i<pp; i++ ) printf ( "%d - ", p[i] );
@@ -94,49 +94,37 @@ void * calculate_primes ( void * argument )
     }
 }
 
-void QuickSort(int v[], int ini, int fin){
-    //declaración de variable snecesarias para el ordenamiento.
-    int mig, left, right, pivote, aux;
+void MergeSort(int v[], int ini, int fin)
+{
 
-    if (ini == fin)
-    { // Caso directo
-        return;
+   int mig;
+
+   if (ini<fin){
+
+       mig=(fin+ini)/2;             //Obtener posición del medio
+       MergeSort(v, ini, mig);   //Ordenar subvectores de forma recursiva
+       MergeSort(v, mig+1, fin);
+
+       int vOrd[fin-ini]; //Vector axuiliar
+       int i=0;           // Indice del vector auxiliar
+       int p1=ini;        //punteros para realizar el merge
+       int p2=mig+1;
+
+       while (p1<=mig && p2<=fin){                 //Minetras los 2 vectores tengan elementos
+	    if (v[p1]<v[p2])  vOrd[i++]=v[p1++];    //Comparar elementos y añadir el  siguente más pequeño
+           else vOrd[i++]=v[p2++];
+      }
+
+      while (p1<=mig) vOrd[i++]=v[p1++];          //Añadir los elementos sobrantes ya ordenados
+      while (p2<=fin) vOrd[i++]=v[p2++];
+
+      int j=0;
+      for (i=ini; i<=fin; i++ )     v[i]=vOrd[j++];  // Sobreescribir vector original
+
     }
-    else // if ini<fin - caso recursivo
-    {
-        // pivote= primer elemento del vector en el rango del quicksort
-        pivote = v[ini];
-        // ordenamos el resto de elementos en base al pivote
-        left=ini+1;
-        right=fin;
-        while(left!=right){
-                // Desplazamiento de valores según el pivote.
-                while ((left<right)&&((v[left]>pivote)&&(v[right]>pivote))) right--;
-                while ((left<right)&&((v[left]<pivote)&&(v[right]<pivote))) left++;
-                if ((v[left]>pivote)&&(v[right]<=pivote)){
-                        // intercambio de valores.
-                        aux=v[left];
-                    v[left]=v[right];
-                    v[right]=aux;
-                        left++;
-                         if(left<right) right--;
-                }
-                else{
-                       if (left<right) left++;
-                }
-        }
-        // intercambio con el pivote.
-        if (v[left]<pivote){
-            aux=v[left];
-            v[left]=v[right];
-            v[right]=aux;
-        }
-        mig=left-1;
-        // llamada recursiva a quicksort
-        if (mig>=0) QuickSort(v,ini,mig);
-        QuickSort(v,mig+1,fin);
-    }
+
 }
+
 
 
 
