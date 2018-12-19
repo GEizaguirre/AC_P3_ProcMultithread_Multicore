@@ -11,7 +11,8 @@ int thread_number;    // número de threads (pasado como argumento)
 int nn;
 int pp;        // posición actual de la lista de primos
 pthread_mutex_t lock;
-int last_ordered, last_thread;
+int num;
+int last_ordered, last_thread, last_left, last_right;
 
 void * calculate_primes ( void * argument );
 void calculate_margins ( int argument , int * low, int * up);
@@ -22,7 +23,6 @@ int insertSorted(int nelem, int key);
 int main (int na, char * arg[])
 {
     int i;
-    int num;
     int result_code;
     int lower_margin, upper_margin;
 
@@ -45,7 +45,7 @@ int main (int na, char * arg[])
     while ( pp < INI )
     {
         for ( i = 1; p[i] * p[i] <= num; i++ )
-        if ( num % p[i] == 0 ) break;
+            if ( num % p[i] == 0 ) break;
         if ( p[i] * p[i] > num ) p[pp++] = num;
         num += 2;
     }
@@ -70,8 +70,9 @@ int main (int na, char * arg[])
     int limit = N / 10;
     while ( pp < limit )
     {
-        printf ( "Last added: %d by %d\n", p[pp], last_thread);
+        printf ( "Last added: %d by %d [ %d, %d ] position: %d\n", p[pp-1], last_thread, last_left, last_right, pp);
     }
+
     //wait for each thread to complete
     for ( i = 0; i < thread_number; i++) 
     {
@@ -84,7 +85,7 @@ int main (int na, char * arg[])
 
     printf ( "Hi ha %d primers\n", pp - 1 );
     printf ( "L'ultim primer trobat %d\n", p[pp - 1] );
-    for ( i = 0; i<pp; i++ ) printf ( "%d - ", p[i] );
+    //for ( i = 0; i<pp; i++ ) printf ( "%d - ", p[i] );
     exit ( 0 );
 }
 
@@ -99,17 +100,23 @@ void * calculate_primes ( void * argument )
         div = 0;    // No divisible
         pthread_mutex_lock ( &lock );
         for ( i = 1; p[i] * p[i] <= lower_margin && !div; i++ )
-        div = div || !( lower_margin % p[i] );
-        if ( !div ) pp = insertSorted ( pp, lower_margin );
+            div = !( lower_margin % p[i] );
+        if ( !div ) 
+        {
+        pp = insertSorted ( pp, lower_margin );
+        //p [pp++] = lower_margin;
         last_thread = * ( ( int * ) argument );
+        last_left = lower_margin;
+        last_right = upper_margin;
+        }
         pthread_mutex_unlock ( &lock );
     }
 }
 
 void calculate_margins ( int argument , int * low, int * up)
 {
-    * low = ( argument ) * ( ( N - INI ) / thread_number ) + INI;
-    * up =  ( argument + 1 ) * ( ( N - INI ) / thread_number ) + INI;
+    * low = ( argument ) * ( ( N - num ) / thread_number ) + num;
+    * up =  ( argument + 1 ) * ( ( N - num ) / thread_number ) + num;
 }
 
 void ord_selection (int v[], int start, int end) 

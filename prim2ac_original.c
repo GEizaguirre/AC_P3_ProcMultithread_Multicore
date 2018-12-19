@@ -30,11 +30,13 @@ while (pp < INI)
   num += 2;
  }
 
+int div;
+
 for(;num<nn;num+=2) 
  {
-  int div = 0; // No divisible
+  div = 0; // No divisible
   for (i=1; p[i]*p[i] <= num && !div;i++)
-    div = div || !(num % p[i]);
+    div = !(num % p[i]);
   if (!div) p[pp++]=num;
  }
 
