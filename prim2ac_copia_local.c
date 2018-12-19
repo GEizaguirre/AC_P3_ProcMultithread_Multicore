@@ -92,7 +92,6 @@ int main (int na, char * arg[])
 
     pthread_mutex_destroy ( &lock );
 
-	//QuickSort (p, initial_values, pp-1);
     printf ( "Hi ha %d primers\n", pp - 1 );
     printf ( "L'ultim primer trobat %d\n", p[pp - 1] );
     //for ( i = 0; i<pp; i++ ) printf ( "%d - ", p[i] );
@@ -124,9 +123,6 @@ void * calculate_primes ( void * argument )
         }
     }
 }
-
-
-
 
 void ord_selection (int v[], int start, int end) 
 {
